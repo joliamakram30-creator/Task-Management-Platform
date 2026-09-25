@@ -9,6 +9,7 @@
 -- Recommended: run inside a transaction
 BEGIN;
 
+
 -- ----------------------------------------------------------------------------
 -- Extensions
 -- ----------------------------------------------------------------------------
@@ -286,16 +287,26 @@ VALUES (1, 2, 'Started working on the wireframes today');
 INSERT INTO task_dependencies (task_id, depends_on_task_id) VALUES (2, 1);
 
 -- بيمسح كل حاجة (جداول، types، triggers) عشان تقدري تبدأي نضيف
-DROP TABLE IF EXISTS comments CASCADE;
-DROP TABLE IF EXISTS notes CASCADE;
-DROP TABLE IF EXISTS task_dependencies CASCADE;
-DROP TABLE IF EXISTS task_assignees CASCADE;
-DROP TABLE IF EXISTS tasks CASCADE;
-DROP TABLE IF EXISTS projects CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-
-DROP TYPE IF EXISTS task_priority;
-DROP TYPE IF EXISTS task_status;
-DROP TYPE IF EXISTS user_role;
 ROLLBACK;
 select * from users;
+SELECT id, name FROM users;
+SELECT id, name FROM projects;
+SELECT id, title FROM tasks;
+
+-- يوزر جديد
+INSERT INTO users (name, email, password_hash, role)
+VALUES ('Mona Hassan', 'mona@nova.com', 'test_hash_789', 'viewer')
+RETURNING id;
+
+-- تاسك جديد على نفس المشروع (project_id = 1)
+INSERT INTO tasks (project_id, title, description, status, priority, due_date)
+VALUES (1, 'Write API documentation', 'Document all endpoints for the dev team', 'todo', 'low', '2026-10-15')
+RETURNING id;
+
+-- تعليق على التاسك الجديد ده من مونا (استخدمي الـ id بتاعها من فوق، مثلاً 3)
+INSERT INTO comments (task_id, user_id, content)
+VALUES (3, 3, 'Please include example requests for each endpoint');
+
+SELECT * FROM users;
+SELECT * FROM tasks;
+SELECT * FROM comments;
